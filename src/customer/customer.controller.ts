@@ -7,7 +7,7 @@ import { Customer } from './customer.entity';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard'; 
 
 @Controller('admin/customers')
-@UseGuards(JwtAuthGuard)
+// @UseGuards(JwtAuthGuard)
 export class CustomerController {
   constructor(private readonly customerService: CustomerService) {}
 

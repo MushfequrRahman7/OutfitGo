@@ -13,11 +13,16 @@ export class AdminService {
 
   async validateAdminCredentials(adminId: string, password: string): Promise<boolean> {
     const admin = await this.adminRepository.findOneBy({ adminId });
-
+  
+    //console.log('Admin found:', admin); // Log the admin object
+    //console.log('Input adminId:', adminId); // Log the input adminId
+    //console.log('Input password:', password); // Log the input password
+    //console.log('Stored password:', admin?.password); // Log the stored password
+  
     if (!admin) {
       return false;
     }
-
+  
     return admin.password === password;
   }
 }

@@ -1,5 +1,5 @@
 // src/product/product.module.ts
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProductService } from './product.service'; 
 import { ProductController } from './product.controller'; 
@@ -9,9 +9,10 @@ import { DiscountModule } from '../discount/discount.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([Product]), 
-    DiscountModule, 
+    forwardRef(() => DiscountModule),
   ],
   providers: [ProductService], 
   controllers: [ProductController], 
+  exports: [ProductService, TypeOrmModule],
 })
 export class ProductModule {}

@@ -1,15 +1,23 @@
 // src/product/product.controller.ts
-import { Controller, Get, Post, Body, Param, Put, Delete, Res } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { Product } from './product.entity';
 import * as fastcsv from 'fast-csv';
 import * as fs from 'fs';
 import { Response } from 'express';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import * as path from 'path';
+import { Multer } from 'multer';
 
 @Controller('admin/products')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
+  @Get('distribution') // Correct route
+  async getProductDistribution() {
+    return this.productService.getProductDistribution();
+  }
   // Endpoint to export products to CSV
   @Get('export/csv')
   async exportToCSV(@Res() res: Response) {
@@ -32,6 +40,22 @@ export class ProductController {
       });
     });
   }
+  @Post('import/csv')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './uploads', // Save CSV in uploads folder
+        filename: (_req, file, callback) => {
+          callback(null, `import-${Date.now()}${path.extname(file.originalname)}`);
+        },
+      }),
+    }),
+  )
+  async importFromCSV(@UploadedFile() file: Multer.File): Promise<any> { // ✅ FIXED TYPE ERROR
+    return this.productService.importProductsFromCSV(file.path);
+  }
+
+
   
   @Post()
   create(@Body() productData: Partial<Product>): Promise<Product> {
@@ -60,4 +84,6 @@ export class ProductController {
   remove(@Param('id') id: number): Promise<void> {
     return this.productService.remove(id);
   }
+
+ 
 }

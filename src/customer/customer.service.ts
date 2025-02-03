@@ -35,9 +35,17 @@ export class CustomerService {
   }
 
   // Get all customers
+  // async findAllCustomers(): Promise<Customer[]> {
+  //   return this.customerRepository.find();
+  // }
   async findAllCustomers(): Promise<Customer[]> {
-    return this.customerRepository.find();
+    const customers = await this.customerRepository.find();
+    return customers.map(customer => ({
+      ...customer,
+      purchases: Number(customer.purchases) || 0, // Ensure it's a number
+    }));
   }
+  
 
   // Get a customer by ID
   async findCustomerById(id: number): Promise<Customer> {

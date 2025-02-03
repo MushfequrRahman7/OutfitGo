@@ -15,4 +15,8 @@ export class NotificationService {
   async getNotifications(): Promise<Notification[]> {
     return this.notificationRepository.find(); 
   }
+  async deleteNotification(id: number): Promise<void> {
+    await this.notificationRepository.delete(id);
+  }
+  
 }
